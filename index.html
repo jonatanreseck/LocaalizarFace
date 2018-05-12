@@ -1,0 +1,48 @@
+﻿<html>
+    <head>
+        <title>
+            Tracking Face
+        </title>
+
+        <style>
+            video,canvas{
+                position: absolute;
+                border: 1px solid red;
+            }
+        </style>
+    </head>
+    <body>
+        <video id="video" width="320" height="240" preload autoplay loop muted></video>
+        <canvas id="canvas" width="320" height="240"></canvas>
+
+
+        <script src="tracking-min.js"></script>
+        <script src="face-min.js"></script>
+        <script>
+            function init(){ //gução para desenhar no video
+                const video = document.getElementById('video')    //pego o video
+                const canvas = document.getElementById('canvas')  //pego o canvas
+                const context = canvas.getContext('2d')
+                const tracker = new tracking.ObjectTracker('face')
+                tracking.track('#video', tracker, {camera: true }) // busco o elemeto #video para variavel tracker abrir a camera
+                tracker.on('track', event => { //funçao q faz a varredura da face
+                    //console.log(event)
+                    context.clearRect(0,0, canvas.width, canvas.height) //limpo o canvas do ponto zero até o seu limite
+                    event.data.forEach( rect => { //recebe um vetor de retangulos pq ele reconhece todos os rostos na foto
+                        context.strokeStyle = '#ff0000'
+                        context.lineWidth = 2
+                        context.strokeRect(rect.x, rect.y, rect.width, rect.height)
+                        context.fillText(`x: ${rect.x}, w: ${rect.width}`, rect.x+rect.width+20, rect.y+20)
+                        context.fillText(`y: ${rect.x}, h: ${rect.width}`, rect.x+rect.width+20, rect.y+40)
+                    })
+
+                })
+
+            }
+            window.onload = init() //chama o init quando carregar a página inteira
+        
+        </script>
+
+
+    </body>
+</html>
